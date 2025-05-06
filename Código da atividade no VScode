@@ -1,0 +1,41 @@
+const express = require('express');
+const app = express();
+const port = 3000;
+
+// Middleware de aplicação (log)
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Rotas GET simples
+app.get('/', (req, res) => res.send('<h1>Rota: Home</h1>'));
+app.get('/about', (req, res) => res.send('<h1>Rota: About</h1>'));
+app.get('/contact', (req, res) => res.send('<h1>Rota: Contact</h1>'));
+app.get('/signin', (req, res) => res.send('<h1>Rota: Signin</h1>'));
+app.get('/signup', (req, res) => res.send('<h1>Rota: Signup</h1>'));
+
+// Rota /users/:userid
+app.get('/users/:userid', (req, res) => {
+  const { userid } = req.params;
+  res.send(`<h1>Bem-vindo, ${userid}!</h1>`);
+});
+
+// Rota sem userid → redireciona para /signup
+app.get('/users', (req, res) => res.redirect('/signup'));
+
+// Rota POST /data
+app.use(express.json());
+app.post('/data', (req, res) => {
+  console.log('Dados recebidos:', req.body);
+  res.send('<h1>Rota: Data (POST)</h1>');
+});
+
+// Rota 404
+app.use((req, res) => {
+  res.status(404).send('<h1>Erro 404</h1><a href="/">Voltar para o início</a>');
+});
+
+app.listen(port, () => {
+  console.log(`Servidor rodando em http://localhost:${port}`);
+});
